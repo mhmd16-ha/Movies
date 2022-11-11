@@ -76,6 +76,7 @@ namespace Movies.Controllers
                 StoryLine=model.StoryLine,
                 poster=dataStream.ToArray(),
                 GenreId=model.GenreId
+                ,Rate=model.Rate,
             };
            await _Context.AddAsync(Movies);
             await _Context.SaveChangesAsync();

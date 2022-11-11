@@ -1,81 +1,109 @@
-﻿@model IEnumerable<Movies.Models.Movie>
+﻿@model IEnumerable<Movie>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Movies";
 }
 
-<h1>
+<h2>
     <i class="bi bi-film"></i>
     Movies
-</h1>
+</h2>
 
-<p>
-  
-    <a asp-action="Create" class="btn btn-info">   <i class="bi bi-plus-lg"></i> Create New</a>
-</p>
+<hr />
+
+<a class="btn btn-primary" asp-action="Create">
+    <i class="bi bi-plus"></i>Add Movie
+</a>
 
 <div class="mt-4">
-    @if(!Model.Any()){
-    <div class="alert alert-warning" role="alert">
-        <i class="bi bi-exclamation-triangle"></i> There isn`t item
-    </div>
+    @if (!Model.Any())
+    {
+        <div class="alert alert-warning" role="alert">
+            <i class="bi bi-exclamation-triangle"></i>
+            No movies found!
+        </div>
     }
-
-    else{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Title)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Year)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Rate)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.StoryLine)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.poster)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Genre)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
+    else
+    {
+        <div class="row">
+            @foreach (var movie in Model)
             {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Title)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Year)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Rate)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.StoryLine)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.poster)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Genre.Name)
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                    </td>
-                </tr>
+                <div class="col-12">
+                    <div class="card mb-3">
+                        <div class="row no-gutters">
+                            <div class="col-md-2 poster" style="background-image: url(data:image\/*;base64,@(Convert.ToBase64String(movie.poster)))"></div>
+                            <div class="col-md-10">
+                                <div class="card-body d-flex flex-column justify-content-between h-100">
+                                    <div>
+                                        <h5 class="card-title">@movie.Title (@movie.Year)</h5>
+                                        <p class="card-text text-justify">@(movie.StoryLine.Length > 500 ? $"{movie.StoryLine.Substring(0, 500)}..." : movie.StoryLine)</p>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <p class="card-text mb-0 mt-2">
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                            <small class="text-muted">@movie.Rate.ToString("0.0")</small>
+                                        </p>
+                                        <div>
+                                            <a asp-action="Details" asp-route-id="@movie.Id" class="btn btn-outline-secondary">
+                                                <i class="bi bi-camera-reels"></i>
+                                                Details
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@movie.Id" class="btn btn-outline-primary">
+                                                <i class="bi bi-pencil"></i>
+                                                Edit
+                                            </a>
+                                            <a href="javascript:;" class="btn btn-danger js-delete" data-id="@movie.Id">
+                                                <i class="bi bi-trash"></i>
+                                                Delete
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             }
-        </tbody>
-    </table>
+        </div>
     }
 </div>
+
+@*@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.js-delete').on('click', function () {
+                var btn = $(this);
+                bootbox.confirm({
+                    message: "Are you sure that you need to delete this movie?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-outline-secondary'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: '/movies/delete/' + btn.data('id'),
+                                success: function () {
+                                    var movieContainer = btn.parents('.col-12');
+                                    movieContainer.addClass('animate__animated animate__zoomOut');
+                                    setTimeout(function () {
+                                        movieContainer.remove();
+                                    }, 1000);
+                                    toastr.success('Movies deleted');
+                                },
+                                error: function () {
+                                    toastr.error('Something went wrong!');
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>*@
