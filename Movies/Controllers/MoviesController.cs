@@ -168,6 +168,30 @@ namespace Movies.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+                return BadRequest();
+            var movie = await _Context.Movies.Include(m => m.Genre).SingleOrDefaultAsync(m => m.Id == id);
+            if (movie == null)
+                return NotFound();
+           
+            return View(movie);
+        }
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+                return BadRequest();
 
+            var movie = await _Context.Movies.FindAsync(id);
+
+            if (movie == null)
+                return NotFound();
+
+            _Context.Movies.Remove(movie);
+            _Context.SaveChanges();
+
+            return Ok();
+        }
     }
 }
